@@ -38,9 +38,13 @@ const LocationList = (props) => {
   }
 
   const currentRecentLocation = props.keyValue === "from"?locationData.recent.from:locationData.recent.to;
-
+  // const itemCount = locationData.popular.length + currentRecentLocation.length;
   function onKeyDownlocation(event){
-    console.log("onKeyDownlocation",event, new Date());
+    if (event.code === 'ArrowUp') {
+      console.log('pre item',new Date())
+    } else if (event.code === 'ArrowDown') {
+      console.log('next item',new Date())
+    }
   }
   return (
     <LocationDiv 
