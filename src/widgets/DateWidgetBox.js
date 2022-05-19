@@ -1,10 +1,23 @@
 import { Datepicker, START_DATE } from "@datepicker-react/styled";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { DateWidgetDrop } from "../customStyle";
 import { useSelector } from "react-redux";
-import useComponentVisible from "../helper/useComponentVisible";
 
 const DateWidgetBox = (props) => {
+    const ref=useRef(null);
+    useEffect(() => {
+        function handleClickOutside(event) {
+          if (ref.current && !ref.current.contains(event.target)) {
+            // alert("You clicked outside of me!");
+            props.visible(false);
+          }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+
     const date = useSelector(state => state.date);
     const [state, setState] = useState({
         startDate: null,
@@ -12,16 +25,6 @@ const DateWidgetBox = (props) => {
         focusedInput: START_DATE,
     });
 
-    const {
-        ref,
-        isComponentVisible,
-        setIsComponentVisible
-    } = useComponentVisible(false);
-
-    useEffect(()=>{
-        setIsComponentVisible(props.expand);
-    },[props, setIsComponentVisible]);
-    
     const singleDateHandler = (event) => {
         // console.log(event.startDate, date.retun)
         setState({
@@ -52,9 +55,8 @@ const DateWidgetBox = (props) => {
         }
     }
     return (
-        isComponentVisible && 
         <DateWidgetDrop
-        ref = {ref}
+        ref={ref}
         tabIndex={-1}>
             {props.trip === "ONEWAY"?(
                 <Datepicker

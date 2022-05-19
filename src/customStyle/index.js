@@ -285,6 +285,7 @@ export const TrendingLi = styledComponents.li`
 
 export const WidgetDiv = styledComponents("div")`
   height: 112px;
+  outline: 0;
   border-right: solid 1px ${p=>p.borderRightColor?p.borderRightColor:'#e7e7e7'};
   :hover {
     background: #fafafa;
@@ -300,7 +301,6 @@ export const WidgetLabel = styledComponents.label`
   display: flex;
   flex-direction: column;
   cursor: pointer;
-
 `;
 
 export const WidgetSpan = styledComponents.span`
@@ -562,7 +562,7 @@ export const DateWidgetInput = styledComponents.input.attrs({
 `;
 
 export const DateWidgetDrop = styledComponents.div`
-  width: 625px;
+  // width: 625px;
   border-radius: 4px;
   background-color: #ffffff;
   box-shadow: 0 1px 6px 0 rgb(0 0 0 / 20%);

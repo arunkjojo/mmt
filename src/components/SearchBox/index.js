@@ -9,6 +9,8 @@ import { changeTrip } from "../../redux/tripSlice";
 import { changeDate } from "../../redux/dateSlice";
 import MultiCity from "./MultiCity";
 import DateWidgetBox from "../../widgets/DateWidgetBox";
+import useComponentVisible from "../../helper/useComponentVisible";
+
 const SearchBox = () => {
   const dispatch = useDispatch();
   const tripType = useSelector(state => state.tripType.tripType);
@@ -27,9 +29,16 @@ const SearchBox = () => {
     traveller:false
   });
 
+  const {
+    ref,
+    isComponentVisible,
+    setIsComponentVisible
+  } = useComponentVisible(false);
+
   useEffect(()=>{
-    console.log("visibility", visibility)
-  }, [visibility]);
+    setIsComponentVisible(visibility.date)
+    // console.log("visibility", visibility)
+  }, [visibility.date]);
 
   const getDifferenceInDate = (date1, date2) => {
     const diffInMs = date1 - date2;
@@ -56,6 +65,7 @@ const SearchBox = () => {
       traveller:false
     });
 
+    
     // console.log("depatureDateHandler");
     
     // setDateVisibility(true);
@@ -222,6 +232,7 @@ const SearchBox = () => {
           onLocationChange={(data)=>locationChangeHandler('to', data)}
         />
         <DateWidget
+          // ref = {ref}
           primaryKey="from"
           label="Departure"
           expand={visibility.date}
@@ -230,6 +241,7 @@ const SearchBox = () => {
           widthValue="158px"
         />
         <DateWidget
+          // ref = {ref}
           disAble={tripType === "ONEWAY"}
           primaryKey="to"
           label="Return"
@@ -239,12 +251,11 @@ const SearchBox = () => {
           widthValue="158px"
           error={getDifferenceInDate(new Date(dateValue.return), new Date(dateValue.departure))}
         />
-        {visibility.date && (
+        {visibility.date && isComponentVisible && (
           <DateWidgetBox 
-            expand={true}
             trip={tripType}
             tabIndex="-1"
-            // visible={data => dateVisibleHandler(data)}
+            visible={data => dateVisibleHandler(data)}
             onDateChange={dateHandler}
           />
         )}
