@@ -27,7 +27,6 @@ const TravellerWidget = (props) => {
   },[props, setIsComponentVisible]);
 
   function showChildComp() {
-    console.log("showChildComp traveller", new Date());
     props.onClick()
   }
 

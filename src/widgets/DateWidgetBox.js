@@ -1,15 +1,26 @@
 import { Datepicker, START_DATE } from "@datepicker-react/styled";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { DateWidgetDrop } from "../customStyle";
 import { useSelector } from "react-redux";
+import useComponentVisible from "../helper/useComponentVisible";
+
 const DateWidgetBox = (props) => {
     const date = useSelector(state => state.date);
-    console.log("DateWidgetBox")
     const [state, setState] = useState({
         startDate: null,
         endDate: null,
         focusedInput: START_DATE,
     });
+
+    const {
+        ref,
+        isComponentVisible,
+        setIsComponentVisible
+    } = useComponentVisible(false);
+
+    useEffect(()=>{
+        setIsComponentVisible(props.expand);
+    },[props, setIsComponentVisible]);
     
     const singleDateHandler = (event) => {
         // console.log(event.startDate, date.retun)
@@ -40,29 +51,11 @@ const DateWidgetBox = (props) => {
             props.onDateChange(event);
         }
     }
-    useEffect(() => {
-        document.addEventListener("click", handleClickOutside, false);
-        return () => {
-            document.removeEventListener("click", handleClickOutside, false);
-        };
-    });
-    let datepickerWrapperRef = useRef(null);
-    const [visible, setVisible] = useState(true);
-    const handleClickOutside = (event) => {
-        console.log("handleClickOutside",new Date())
-        if (datepickerWrapperRef.current && !datepickerWrapperRef.current.contains(event.target)) {
-            console.log("datepickerWrapperRef pre",new Date())
-            setVisible(false);
-            props.visible(false)
-            console.log("datepickerWrapperRef post",new Date())
-        }
-    };
-
     return (
-        visible &&
+        isComponentVisible && 
         <DateWidgetDrop
-        tabIndex={-1}
-        ref={datepickerWrapperRef}>
+        ref = {ref}
+        tabIndex={-1}>
             {props.trip === "ONEWAY"?(
                 <Datepicker
                     tabIndex={-1}
@@ -93,7 +86,7 @@ const DateWidgetBox = (props) => {
                 />
             )}
         </DateWidgetDrop>
-  );
+    );
 };
 
 export default DateWidgetBox;

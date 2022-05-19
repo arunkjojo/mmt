@@ -81,13 +81,13 @@ const LocationWidget = (props) => {
     // console.log("showChildComp location");
     props.onClick();
   }
-  
   return (
     <WidgetDiv 
       widthValue={props.widthValue}
       ref={ref} 
       onFocus={showChildComp} 
       tabIndex={0}
+      style={props.label === 'To'?{marginLeft: "-18px"}:null}
     >
       <WidgetLabel 
         htmlFor={props.label}

@@ -40,7 +40,7 @@ const LocationList = (props) => {
   const currentRecentLocation = props.keyValue === "from"?locationData.recent.from:locationData.recent.to;
 
   function onKeyDownlocation(event){
-    console.log("onKeyDownlocation",event);
+    console.log("onKeyDownlocation",event, new Date());
   }
   return (
     <LocationDiv 

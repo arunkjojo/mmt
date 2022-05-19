@@ -9,7 +9,6 @@ import { changeTrip } from "../../redux/tripSlice";
 import { changeDate } from "../../redux/dateSlice";
 import MultiCity from "./MultiCity";
 import DateWidgetBox from "../../widgets/DateWidgetBox";
-
 const SearchBox = () => {
   const dispatch = useDispatch();
   const tripType = useSelector(state => state.tripType.tripType);
@@ -30,7 +29,7 @@ const SearchBox = () => {
 
   useEffect(()=>{
     console.log("visibility", visibility)
-  }, [visibility])
+  }, [visibility]);
 
   const getDifferenceInDate = (date1, date2) => {
     const diffInMs = date1 - date2;
@@ -57,7 +56,7 @@ const SearchBox = () => {
       traveller:false
     });
 
-    console.log("depaturedateHandler");
+    // console.log("depatureDateHandler");
     
     // setDateVisibility(true);
     // setFromVisibility(false);
@@ -75,7 +74,7 @@ const SearchBox = () => {
       traveller:false
     });
 
-    console.log("returnDateHandler")
+    // console.log("returnDateHandler")
 
     dispatch(changeTrip({
       tripType:"ROUND TRIP"
@@ -91,7 +90,7 @@ const SearchBox = () => {
       traveller:false
     });
 
-    console.log("fromLocationHandler")
+    // console.log("fromLocationHandler")
   }
 
   function toLocationHandler() {
@@ -103,7 +102,7 @@ const SearchBox = () => {
       traveller:false
     });
     
-    console.log("toLocationHandler")
+    // console.log("toLocationHandler")
   }
 
   function travellerHandler() {
@@ -115,11 +114,10 @@ const SearchBox = () => {
       traveller:true
     });
     
-    console.log("travellerHandler")
+    // console.log("travellerHandler")
   }
 
   function locationChangeHandler(type, location){
-    // console.log(type, location);
     if(type==='from')
       
       setVisibility({
@@ -136,7 +134,7 @@ const SearchBox = () => {
         traveller:false
       });
     
-    console.log("locationChangeHandler")
+    // console.log("locationChangeHandler")
   }
 
   function dateHandler(data) {
@@ -147,10 +145,10 @@ const SearchBox = () => {
         date:false,
         from:false,
         to:false,
-        traveller:false
+        traveller:true
       });
     
-      console.log("dateHandler")
+      // console.log("dateHandler")
 
       dispatch(
         changeDate({
@@ -169,7 +167,7 @@ const SearchBox = () => {
       traveller:false
     });
     
-    console.log("dateVisibleHandler")
+    // console.log("dateVisibleHandler")
 
   }
   
@@ -181,7 +179,7 @@ const SearchBox = () => {
       traveller:false
     });
     
-    console.log("travellerVisibilityHandler")
+    // console.log("travellerVisibilityHandler")
   }
 
   return (
@@ -243,9 +241,10 @@ const SearchBox = () => {
         />
         {visibility.date && (
           <DateWidgetBox 
+            expand={true}
             trip={tripType}
             tabIndex="-1"
-            visible={data => dateVisibleHandler(data)}
+            // visible={data => dateVisibleHandler(data)}
             onDateChange={dateHandler}
           />
         )}
