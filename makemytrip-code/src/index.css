@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+  height: calc(100%);
+  width: calc(100%);
+  background: hsl(214deg 93% 22%);
+  --font-family: "Lato";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #4a4a4a;
+  font-size: 14px;
+}
