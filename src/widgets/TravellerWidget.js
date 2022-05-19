@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import TravellersClassList from "./TravellerWidget/TravellersClassList";
 import {
@@ -12,20 +12,19 @@ import {
   ErrorSection,
   ErrorIcon,
   ErrorMessage,
-  Input,
 } from "../customStyle";
 import useComponentVisible from "../helper/useComponentVisible";
 
 const TravellerWidget = (props) => {
   const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(false);
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
 
   const travellerData = useSelector((state) => state.flight);
   const gbAvailable = 'Group Booking Now Available!';
 
   useEffect(()=>{
     setIsComponentVisible(props.expand);
-  },[props]);
+  },[props, setIsComponentVisible]);
 
   function showChildComp() {
     // console.log("showChildComp traveller");

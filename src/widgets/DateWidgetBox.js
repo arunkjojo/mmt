@@ -32,7 +32,7 @@ const DateWidgetBox = (props) => {
     useEffect(() => {
         document.addEventListener("click", handleClickOutside, true);
         return () => {
-            document.removeEventListener("click", handleClickOutside, true);
+            document.removeEventListener("click", handleClickOutside, false);
         };
     });
     let datepickerWrapperRef = useRef(null);

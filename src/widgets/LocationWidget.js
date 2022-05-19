@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, } from "react";
 import LocationList from "./LocationWidget/LocationList";
 import { useSelector, useDispatch } from "react-redux";
 import { changeFromLocation, changeToLocation } from "../redux/locationSlice";
@@ -11,7 +11,6 @@ import {
   ErrorSection,
   ErrorIcon,
   ErrorMessage,
-  Input,
 } from "../customStyle";
 import useComponentVisible from "../helper/useComponentVisible";
 import { changeLocations } from "../redux/flightSlice";
@@ -23,11 +22,11 @@ const LocationWidget = (props) => {
     isComponentVisible,
     setIsComponentVisible
   } = useComponentVisible(false);
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
 
   const dispatch = useDispatch();
   const locationFixHandler = (data) => {
-    setVisible(false);
+    // setVisible(false);
     if (props.primaryKey === "from") {
       let from = {
         id: data.id,
@@ -76,7 +75,7 @@ const LocationWidget = (props) => {
 
   useEffect(()=>{
     setIsComponentVisible(props.expand);
-  },[props]);
+  },[props, setIsComponentVisible]);
   
   function showChildComp() {
     // console.log("showChildComp location");

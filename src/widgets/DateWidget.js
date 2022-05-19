@@ -1,31 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
-// import { changeDate } from "../redux/dateSlice";
-// import DatePicker from "./DateWidgets/DatePicker";
 import {
   WidgetDiv,
   WidgetLabel,
   WidgetSpan,
   WidgetValue,
-  // DateWidgetDrop,
   CloseIcon,
   ErrorSection,
   ErrorIcon,
   ErrorMessage,
-  Input,
 } from "../customStyle";
-// import useComponentVisible from "../helper/useComponentVisible";
 import { changeTrip } from "../redux/tripSlice";
 
 const DateWidget = (props) => {
-  // const { ref, isComponentVisible, setIsComponentVisible } = useComponentVisible(true);
-  // const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-
-  // const dateChangeHandler = () => {
-  //   setVisible(false);
-  //   setIsComponentVisible(false);
-  // }
 
   let errorMessage = null;
   
@@ -33,7 +21,7 @@ const DateWidget = (props) => {
     errorMessage = 'You are booking for more than 30 days';
   }
   function showChildComp() {
-    console.log("showChildComp date");
+    // console.log("showChildComp date");
     props.onClick()
   }
   return (

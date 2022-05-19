@@ -159,7 +159,7 @@ const SearchBox = () => {
       traveller:false
     });
     
-    console.log("visibleHandler",visibility)
+    console.log("dateVisibleHandler",visibility)
 
   }
   
