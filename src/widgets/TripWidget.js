@@ -2,23 +2,21 @@ import React from "react";
 import { FareTypeDiv, FareItems, RedioItem, LabelItem } from "../customStyle";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTrip } from "../redux/tripSlice";
-import { changeDate } from "../redux/dateSlice";
+// import { changeDate } from "../redux/dateSlice";
 const TripWidget = (props) => {
   const tripData = useSelector(state => state.tripType.tripType);
-  const dateData = useSelector(state => state.date);
+  // const dateData = useSelector(state => state.date);
   const dispatch = useDispatch();
   const tripChange = (value) => {
     dispatch(changeTrip({
       tripType:value
     }));
-    if(value === 'ROUND TRIP' && new Date(dateData.departure).toDateString() === new Date(dateData.return).toDateString()){
-      // console.log("departure",new Date(dateData.departure).toDateString());
-      // console.log("return",new Date(new Date(dateData.departure).getTime() + 24 * 60 * 60 * 1000).toDateString())
-      dispatch(changeDate({
-        departure:new Date(dateData.departure).toDateString(),
-        return: new Date(new Date(dateData.departure).getTime() + 24 * 60 * 60 * 1000).toDateString()
-      }));
-    }
+    // if(value === 'ROUND TRIP' && new Date(dateData.departure).toDateString() === new Date(dateData.return).toDateString()){
+    //   dispatch(changeDate({
+    //     departure:new Date(dateData.departure).toDateString(),
+    //     return: new Date(new Date(dateData.departure).getTime() + 24 * 60 * 60 * 1000).toDateString()
+    //   }));
+    // }
   }
   return (
     <FareTypeDiv>

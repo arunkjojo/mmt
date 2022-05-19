@@ -27,7 +27,7 @@ const TravellerWidget = (props) => {
   },[props, setIsComponentVisible]);
 
   function showChildComp() {
-    // console.log("showChildComp traveller");
+    console.log("showChildComp traveller", new Date());
     props.onClick()
   }
 
@@ -66,7 +66,7 @@ const TravellerWidget = (props) => {
       {props.expand && isComponentVisible && (
         <TravellerDropDiv>
           <TravellersClassList onApply={(event)=>{
-            event.stopPropagation();
+            // event.stopPropagation();
             props.visible();
             // setVisible(false);
           }}/>

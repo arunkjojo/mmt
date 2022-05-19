@@ -18,7 +18,7 @@ const DateWidget = (props) => {
   let errorMessage = null;
   
   if(props.error > 30) {
-    errorMessage = 'You are booking for more than 30 days';
+    errorMessage = `You are booking for more than 30 days`;
   }
   function showChildComp() {
     // console.log("showChildComp date");

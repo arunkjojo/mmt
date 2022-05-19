@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DateWidget from "../../widgets/DateWidget";
 import LocationWidget from "../../widgets/LocationWidget";
 import TravellerWidget from "../../widgets/TravellerWidget";
@@ -22,16 +22,26 @@ const SearchBox = () => {
   // const [travellerVisibility, setTravellerVisibility] = useState(false);
 
   const [visibility, setVisibility] = useState({
-    depature:false,
-    return:false,
+    date:false,
     from:false,
     to:false,
     traveller:false
   });
 
+  useEffect(()=>{
+    console.log("visibility", visibility)
+  }, [visibility])
+
   const getDifferenceInDate = (date1, date2) => {
-    const diffInMs = Math.abs(date2 - date1);
-    return diffInMs / (1000 * 60 * 60 * 24);
+    const diffInMs = date1 - date2;
+    const dateDiff = diffInMs / (1000 * 60 * 60 * 24);
+    if(dateDiff<=0){
+      dispatch(changeDate({
+        departure:new Date(dateValue.departure).toDateString(),
+        return: new Date(new Date(dateValue.departure).getTime() + 24 * 60 * 60 * 1000).toDateString()
+      }));
+    }
+    return Math.abs(dateDiff);
   }
 
   const toggleLocationHandler = () => {
@@ -47,7 +57,7 @@ const SearchBox = () => {
       traveller:false
     });
 
-    console.log("depatureDateHandler",visibility);
+    console.log("depaturedateHandler");
     
     // setDateVisibility(true);
     // setFromVisibility(false);
@@ -65,7 +75,7 @@ const SearchBox = () => {
       traveller:false
     });
 
-    console.log("returnDateHandler",visibility)
+    console.log("returnDateHandler")
 
     dispatch(changeTrip({
       tripType:"ROUND TRIP"
@@ -81,7 +91,7 @@ const SearchBox = () => {
       traveller:false
     });
 
-    console.log("fromLocationHandler",visibility)
+    console.log("fromLocationHandler")
   }
 
   function toLocationHandler() {
@@ -93,7 +103,7 @@ const SearchBox = () => {
       traveller:false
     });
     
-    console.log("toLocationHandler",visibility)
+    console.log("toLocationHandler")
   }
 
   function travellerHandler() {
@@ -105,7 +115,7 @@ const SearchBox = () => {
       traveller:true
     });
     
-    console.log("travellerHandler",visibility)
+    console.log("travellerHandler")
   }
 
   function locationChangeHandler(type, location){
@@ -126,7 +136,7 @@ const SearchBox = () => {
         traveller:false
       });
     
-    console.log("locationChangeHandler",visibility)
+    console.log("locationChangeHandler")
   }
 
   function dateHandler(data) {
@@ -140,7 +150,7 @@ const SearchBox = () => {
         traveller:false
       });
     
-      console.log("dateHandler",visibility)
+      console.log("dateHandler")
 
       dispatch(
         changeDate({
@@ -151,15 +161,15 @@ const SearchBox = () => {
     }
   }
 
-  function dateVisibleHandler() {
+  function dateVisibleHandler(data) {
     setVisibility({
-      date:false,
+      date:data,
       from:false,
       to:false,
       traveller:false
     });
     
-    console.log("dateVisibleHandler",visibility)
+    console.log("dateVisibleHandler")
 
   }
   
@@ -171,7 +181,7 @@ const SearchBox = () => {
       traveller:false
     });
     
-    console.log("travellerVisibilityHandler",visibility)
+    console.log("travellerVisibilityHandler")
   }
 
   return (
@@ -216,7 +226,7 @@ const SearchBox = () => {
         <DateWidget
           primaryKey="from"
           label="Departure"
-          expand={visibility.depature}
+          expand={visibility.date}
           onClick={depatureDateHandler}
           date={new Date(dateValue.departure)}
           widthValue="158px"
@@ -225,7 +235,7 @@ const SearchBox = () => {
           disAble={tripType === "ONEWAY"}
           primaryKey="to"
           label="Return"
-          expand={visibility.return}
+          expand={visibility.date}
           onClick={returnDateHandler}
           date={new Date(dateValue.return)}
           widthValue="158px"
@@ -235,7 +245,7 @@ const SearchBox = () => {
           <DateWidgetBox 
             trip={tripType}
             tabIndex="-1"
-            visible={dateVisibleHandler}
+            visible={data => dateVisibleHandler(data)}
             onDateChange={dateHandler}
           />
         )}
