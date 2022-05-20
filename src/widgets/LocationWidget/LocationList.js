@@ -18,7 +18,7 @@ import { getApiSuggestions } from "../../API/";
 import { useKeyPress } from "../../helper/useKeyPress"
 
 const LocationList = (props) => {
-  const [selected, setSelected] = useState(undefined);
+  const [selected, setSelected] = useState(null);
   const downPress = useKeyPress("ArrowDown");
   const upPress = useKeyPress("ArrowUp");
   const enterPress = useKeyPress("Enter");
@@ -35,6 +35,7 @@ const LocationList = (props) => {
     []
   );
 
+
   const updateValue = (value) => {
     setSearchValue(value);
     debouncedSave(value);
@@ -49,22 +50,41 @@ const LocationList = (props) => {
   const countIteams = locationData.popular.length + currentRecentLocation.length;
   
   useEffect(() => {
-    if (countIteams && downPress) {
+    if (downPress) {
       setCursor((prevState) =>
         prevState < countIteams - 1 ? prevState + 1 : prevState
       );
     }
-  }, [downPress, countIteams]);
+  }, [downPress]);
 
   useEffect(() => {
-    if (countIteams && upPress) {
-      setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
+    if (upPress) {
+      setCursor((prevState) => 
+        prevState > 0 ? (prevState - 1) : prevState
+      );
     }
-  }, [upPress, countIteams]);
+  }, [upPress]);
 
   useEffect(() => {
     if (enterPress) {
-      console.log("locationData.popular["+cursor+"]",locationData.popular[cursor]);
+      switch (locationType) {
+        case 'suggest':
+          console.log("suggestionFilterdData.indexOf(hovered)",suggestionFilterdData.indexOf(hovered))
+          setCursor(suggestionFilterdData.indexOf(hovered));
+        break;
+        case 'recent':
+          console.log("currentRecentLocation.indexOf(hovered)",currentRecentLocation.indexOf(hovered))
+          setCursor(currentRecentLocation.indexOf(hovered));
+        break;
+        case 'popular':
+          console.log("locationData.popular.indexOf(hovered)",locationData.popular.indexOf(hovered))
+          setCursor(locationData.popular.indexOf(hovered));
+        break;
+        default:
+          console.log("not in all")
+          setCursor(null);
+        break;
+      }
     }
   }, [cursor, enterPress]);
 
@@ -83,22 +103,35 @@ const LocationList = (props) => {
           console.log("locationData.popular.indexOf(hovered)",locationData.popular.indexOf(hovered))
           setCursor(locationData.popular.indexOf(hovered));
         break;
-      
         default:
-          console.log("not in ")
+          console.log("not in all")
           setCursor(null);
         break;
       }
-      
     }
   }, [hovered]);
 
   function onMouseEnterHandler(data,types) {
-    console.log("type",types, "data",data);
+    // console.log("type",types, "data",data);
     setHovered(data);
     setLocationType(types)
   }
 
+  function onKeyPrssHandler(event){
+    // console.log("event",event.code);
+    if(event.code === 'ArrowDown'){
+      console.log("ArrowDown cursor",cursor)
+    }if(event.code === 'ArrowUp'){
+      console.log("ArrowDown cursor",cursor)
+    }
+  }
+
+  useEffect(()=>{
+    if(selected !== null)
+      props.locationFixed({
+        ...selected
+      })
+  },[selected])
 
   return (
     <LocationDiv
@@ -106,6 +139,7 @@ const LocationList = (props) => {
       <SearchInput
         tabIndex={-1}
         value={searchValue}
+        onKeyDown={onKeyPrssHandler}
         onChange={(event) => {
           event.preventDefault();
           updateValue(event.target.value);
@@ -127,10 +161,13 @@ const LocationList = (props) => {
                     active={index === cursor}
                     item={data}
                     setSelected={setSelected}
-                    setHovered={setHovered}>
+                    setHovered={setHovered}
+                    onFocus={setHovered}
+                  >
                     <LocationData
                       key={data.id}
                       onClick={() => setSelected(data)}
+                      onFocus={() => onMouseEnterHandler(data,'suggest')}
                       onMouseEnter={() => onMouseEnterHandler(data,'suggest')}
                       onMouseLeave={() => setHovered(undefined)}
                       // onClick={(e) => {
@@ -169,10 +206,13 @@ const LocationList = (props) => {
                   active={index === cursor}
                   item={data}
                   setSelected={setSelected}
-                  setHovered={setHovered}>
+                  setHovered={setHovered}
+                  onFocus={setHovered}
+                >
                   <LocationData
                     key={data.id}
                     onClick={() => setSelected(data)}
+                    onFocus={() => onMouseEnterHandler(data,'recent')}
                     onMouseEnter={() => onMouseEnterHandler(data,'recent')}
                     onMouseLeave={() => setHovered(undefined)}
                     // onClick={(e) => {
