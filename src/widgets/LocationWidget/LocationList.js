@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   LocationDiv,
   Label,
@@ -15,10 +15,18 @@ import {
 import { useSelector } from "react-redux";
 import debounce from "lodash.debounce";
 import { getApiSuggestions } from "../../API/";
+import { useKeyPress } from "../../helper/useKeyPress"
 
 const LocationList = (props) => {
-  const locationData = useSelector((state) => state.location);
+  const [selected, setSelected] = useState(undefined);
+  const downPress = useKeyPress("ArrowDown");
+  const upPress = useKeyPress("ArrowUp");
+  const enterPress = useKeyPress("Enter");
+  const [cursor, setCursor] = useState(null);
+  const [hovered, setHovered] = useState(undefined);
+  const [locationType, setLocationType] = useState(null);
 
+  const locationData = useSelector((state) => state.location);
   const [searchValue, setSearchValue] = useState("");
   let suggestionFilterdData = [];
 
@@ -38,18 +46,63 @@ const LocationList = (props) => {
   }
 
   const currentRecentLocation = props.keyValue === "from"?locationData.recent.from:locationData.recent.to;
-  // const itemCount = locationData.popular.length + currentRecentLocation.length;
-  function onKeyDownlocation(event){
-    if (event.code === 'ArrowUp') {
-      console.log('pre item',new Date())
-    } else if (event.code === 'ArrowDown') {
-      console.log('next item',new Date())
+  const countIteams = locationData.popular.length + currentRecentLocation.length;
+  
+  useEffect(() => {
+    if (countIteams && downPress) {
+      setCursor((prevState) =>
+        prevState < countIteams - 1 ? prevState + 1 : prevState
+      );
     }
+  }, [downPress, countIteams]);
+
+  useEffect(() => {
+    if (countIteams && upPress) {
+      setCursor((prevState) => (prevState > 0 ? prevState - 1 : prevState));
+    }
+  }, [upPress, countIteams]);
+
+  useEffect(() => {
+    if (enterPress) {
+      console.log("locationData.popular["+cursor+"]",locationData.popular[cursor]);
+    }
+  }, [cursor, enterPress]);
+
+  useEffect(() => {
+    if (hovered) {
+      switch (locationType) {
+        case 'suggest':
+          console.log("suggestionFilterdData.indexOf(hovered)",suggestionFilterdData.indexOf(hovered))
+          setCursor(suggestionFilterdData.indexOf(hovered));
+        break;
+        case 'recent':
+          console.log("currentRecentLocation.indexOf(hovered)",currentRecentLocation.indexOf(hovered))
+          setCursor(currentRecentLocation.indexOf(hovered));
+        break;
+        case 'popular':
+          console.log("locationData.popular.indexOf(hovered)",locationData.popular.indexOf(hovered))
+          setCursor(locationData.popular.indexOf(hovered));
+        break;
+      
+        default:
+          console.log("not in ")
+          setCursor(null);
+        break;
+      }
+      
+    }
+  }, [hovered]);
+
+  function onMouseEnterHandler(data,types) {
+    console.log("type",types, "data",data);
+    setHovered(data);
+    setLocationType(types)
   }
+
+
   return (
-    <LocationDiv 
-      autoFocus={true}
-      onKeyDown={onKeyDownlocation}>
+    <LocationDiv
+    >
       <SearchInput
         tabIndex={-1}
         value={searchValue}
@@ -59,7 +112,9 @@ const LocationList = (props) => {
         }}
       />
       <LocationListDiv>
-        {searchValue !== "" ? (
+        {
+        searchValue !== "" ? 
+        (
           searchValue.length < 3 ? (
             <Label>Enter atleast 3 charactors</Label>
           ) : (
@@ -67,21 +122,29 @@ const LocationList = (props) => {
               <Label>SUGGESTIONS</Label>
               <LocationUl>
                 {suggestionFilterdData.map((data, index) => (
-                  <LocationLi key={index}>
+                  <LocationLi 
+                    key={index} 
+                    active={index === cursor}
+                    item={data}
+                    setSelected={setSelected}
+                    setHovered={setHovered}>
                     <LocationData
                       key={data.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        props.locationFixed({
-                          id: data.id,
-                          name: data.name,
-                          country: data.country,
-                          description: data.description,
-                          code: data.code,
-                          countryCode: data.countryCode,
-                          icon: data.icon,
-                        });
-                      }}
+                      onClick={() => setSelected(data)}
+                      onMouseEnter={() => onMouseEnterHandler(data,'suggest')}
+                      onMouseLeave={() => setHovered(undefined)}
+                      // onClick={(e) => {
+                      //   e.stopPropagation();
+                      //   props.locationFixed({
+                      //     id: data.id,
+                      //     name: data.name,
+                      //     country: data.country,
+                      //     description: data.description,
+                      //     code: data.code,
+                      //     countryCode: data.countryCode,
+                      //     icon: data.icon,
+                      //   });
+                      // }}
                     >
                       <LocationNameLabel>
                         <LocationName>
@@ -101,21 +164,29 @@ const LocationList = (props) => {
             <Label>RECENT SEARCH</Label>
             <LocationUl>
               {currentRecentLocation.map((data, index) => (
-                <LocationLi key={index} tabIndex="-1">
+                <LocationLi 
+                  key={index} 
+                  active={index === cursor}
+                  item={data}
+                  setSelected={setSelected}
+                  setHovered={setHovered}>
                   <LocationData
                     key={data.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      props.locationFixed({
-                        id: data.id,
-                        name: data.name,
-                        country: data.country,
-                        description: data.description,
-                        code: data.code,
-                        countryCode: data.countryCode,
-                        icon: data.icon,
-                      });
-                    }}
+                    onClick={() => setSelected(data)}
+                    onMouseEnter={() => onMouseEnterHandler(data,'recent')}
+                    onMouseLeave={() => setHovered(undefined)}
+                    // onClick={(e) => {
+                    //   e.stopPropagation();
+                    //   props.locationFixed({
+                    //     id: data.id,
+                    //     name: data.name,
+                    //     country: data.country,
+                    //     description: data.description,
+                    //     code: data.code,
+                    //     countryCode: data.countryCode,
+                    //     icon: data.icon,
+                    //   });
+                    // }}
                   >
                     <LocationNameLabel>
                       <LocationName>
@@ -132,21 +203,29 @@ const LocationList = (props) => {
             <Label>POPULAR CITY</Label>
             <LocationUl>
               {locationData.popular.map((data, index) => (
-                <LocationLi key={index} tabIndex="-1">
+                <LocationLi 
+                  key={index} 
+                  active={index === cursor}
+                  item={data}
+                  setSelected={setSelected}
+                  setHovered={setHovered}>
                   <LocationData
                     key={data.id}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      props.locationFixed({
-                        id: data.id,
-                        name: data.name,
-                        country: data.country,
-                        countryCode: data.countryCode,
-                        description: data.description,
-                        code: data.code,
-                        icon: data.icon,
-                      });
-                    }}
+                    onClick={() => setSelected(data)}
+                    onMouseEnter={() => onMouseEnterHandler(data,'popular')}
+                    onMouseLeave={() => setHovered(undefined)}
+                    // onClick={(e) => {
+                    //   e.stopPropagation();
+                    //   props.locationFixed({
+                    //     id: data.id,
+                    //     name: data.name,
+                    //     country: data.country,
+                    //     countryCode: data.countryCode,
+                    //     description: data.description,
+                    //     code: data.code,
+                    //     icon: data.icon,
+                    //   });
+                    // }}
                   >
                     <LocationNameLabel>
                       <LocationName>
@@ -160,7 +239,8 @@ const LocationList = (props) => {
               ))}
             </LocationUl>
           </div>
-        )}
+        )
+        }
       </LocationListDiv>
     </LocationDiv>
   );
